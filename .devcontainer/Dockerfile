@@ -15,3 +15,10 @@ RUN gem install bundler rubocop
 
 # [Optional] Uncomment this line to install global node packages.
 # RUN su vscode -c "source /usr/local/share/nvm/nvm.sh && npm install -g <your-package-here>" 2>&1
+
+# Install gauge and gauge plugins
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+RUN curl -SsL https://downloads.gauge.org/stable | sh \
+    && su vscode -c "gauge install html-report" \
+    && su vscode -c "gauge install screenshot" \
+    && su vscode -c "gauge install js"
