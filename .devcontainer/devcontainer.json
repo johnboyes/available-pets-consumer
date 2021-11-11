@@ -8,7 +8,8 @@
 			// Use -bullseye variants on local on arm64/Apple Silicon.
 			"VARIANT": "2.7-bullseye",
 			// Options
-			"NODE_VERSION": "lts/*"
+			"NODE_VERSION": "lts/*",
+			"CHROMIUM_VERSION": "90.0.4430.212-1"
 		}
 	},
 
