@@ -32,6 +32,8 @@ jobs:
           gauge-plugins: js, html-report, screenshot
 
       - name: FTs
+        env:
+          WEB_URL: ${{ secrets.WEB_URL }}
         run: |
           cd functional-tests
           npm install
