@@ -7,8 +7,7 @@ get('/') do
 end
 
 def pets
-  url = 'https://petstore.swagger.io/v2/pet/findByStatus?status=available'
-  uri = URI(url)
-  response = Net::HTTP.get(uri)
+  url = "#{ENV['PETSTORE_URL']}pet/findByStatus?status=available"
+  response = Net::HTTP.get(URI(url))
   JSON.parse(response)
 end
