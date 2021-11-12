@@ -1,0 +1,45 @@
+---
+
+name: FTs
+on:  # yamllint disable-line rule:truthy
+  push:
+  pull_request:
+    branches:
+      # Branches from forks have the form 'user:branch-name' so we only run
+      # this job on pull_request events for branches that look like fork
+      # branches. Without this we would end up running this job twice for non
+      # forked PRs, once for the push and then once for opening the PR.
+      # See https://github.community/t/how-to-trigger-an-action-on-push-or-pull-request-but-not-both/16662/10
+      - "**:**"
+jobs:
+
+  functional-tests:
+    name: ${{ matrix.os }} FTs
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+
+    steps:
+
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Install Gauge
+        uses: getgauge/setup-gauge@master
+        with:
+          gauge-version: master
+          gauge-plugins: js, html-report, screenshot
+
+      - name: FTs
+        run: |
+          cd functional-tests
+          npm install
+          gauge run
+
+      - name: Upload logs
+        uses: actions/upload-artifact@v1
+        if: always()
+        with:
+          name: ft-logs-${{ matrix.os }}
+          path: functional-tests/logs
