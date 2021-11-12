@@ -8,16 +8,21 @@
 			// Use -bullseye variants on local on arm64/Apple Silicon.
 			"VARIANT": "2.7-bullseye",
 			// Options
-			"NODE_VERSION": "none"
+			"NODE_VERSION": "lts/*",
+			"CHROMIUM_VERSION": "90.0.4430.212-1"
 		}
 	},
+
+	// needed for Taiko tests
+	"runArgs": ["--security-opt", "seccomp=unconfined" ],
 
 	// Set *default* container specific settings.json values on container create.
 	"settings": {},
 
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
-		"rebornix.Ruby"
+		"rebornix.Ruby",
+		"getgauge.gauge"
 	],
 	
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.

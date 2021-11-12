@@ -2,6 +2,8 @@
 
 AllCops:
   NewCops: enable
+  Exclude:
+    - 'functional-tests/**/*'
 
 Style/FrozenStringLiteralComment:
   Enabled: false
