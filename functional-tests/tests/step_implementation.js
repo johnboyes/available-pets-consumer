@@ -44,7 +44,7 @@ gauge.customScreenshotWriter = async function () {
 };
 
 step("Open available pets application", async function () {
-    await goto("https://available-pets-consumer.herokuapp.com");
+    await goto(process.env.WEB_URL);
 });
 
 
