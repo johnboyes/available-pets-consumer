@@ -6,13 +6,13 @@ on:  # yamllint disable-line rule:truthy
 
 jobs:
 
-  review-app-status-verification:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Verify Review App status
-        uses: niteoweb/reviewapps-deploy-status@v1.4.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  # review-app-status-verification:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Verify Review App status
+  #       uses: niteoweb/reviewapps-deploy-status@v1.4.0
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   functional-tests:
     name: ${{ matrix.os }} FTs
