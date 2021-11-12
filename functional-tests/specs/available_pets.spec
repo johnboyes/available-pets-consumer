@@ -1,6 +1,5 @@
-# Available pets
+# Pet store availability
 
-* Open available pets application
+## Customers can see which pets are available in the pet store
 
-## Hello world
-* Must display "Hello world!"
+* There is a pet named "doggie" available in the pet store

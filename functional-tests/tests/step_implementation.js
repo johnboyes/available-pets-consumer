@@ -43,11 +43,8 @@ gauge.customScreenshotWriter = async function () {
     return path.basename(screenshotFilePath);
 };
 
-step("Open available pets application", async function () {
+
+step("There is a pet named <petName> available in the pet store", async function (petName) {
     await goto(process.env.WEB_URL);
-});
-
-
-step("Must display <message>", async function (message) {
-    assert.ok(await text(message).exists(0, 0));
+    assert.ok(await text(petName).exists(0, 0));
 });
