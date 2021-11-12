@@ -1,16 +1,11 @@
 ---
 
-name: FTs
+name: FTs on Review App
 on:  # yamllint disable-line rule:truthy
-  push:
   pull_request:
     branches:
-      # Branches from forks have the form 'user:branch-name' so we only run
-      # this job on pull_request events for branches that look like fork
-      # branches. Without this we would end up running this job twice for non
-      # forked PRs, once for the push and then once for opening the PR.
-      # See https://github.community/t/how-to-trigger-an-action-on-push-or-pull-request-but-not-both/16662/10
-      - "**:**"
+      - master
+
 jobs:
 
   functional-tests:
@@ -31,9 +26,15 @@ jobs:
           gauge-version: master
           gauge-plugins: js, html-report, screenshot
 
+      - name: Verify Review App status
+        id: review_app_status
+        uses: niteoweb/reviewapps-deploy-status@v1.4.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: FTs
         env:
-          WEB_URL: ${{ secrets.WEB_URL }}
+          WEB_URL: ${{ steps.review_app_status.outputs.review_app_url }}
         run: |
           cd functional-tests
           npm install
