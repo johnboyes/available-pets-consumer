@@ -20,6 +20,7 @@ jobs:
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
 
   deploy-to-production:
+    needs: deploy-to-pre-production
     runs-on: ubuntu-20.04
     environment: production
     steps:
