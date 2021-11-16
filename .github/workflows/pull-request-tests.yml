@@ -1,6 +1,6 @@
 ---
 
-name: FTs on Review App
+name: FTs on pull requests
 on:  # yamllint disable-line rule:truthy
   pull_request:
     branches:
@@ -9,11 +9,8 @@ on:  # yamllint disable-line rule:truthy
 jobs:
 
   functional-tests:
-    name: ${{ matrix.os }} FTs
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
+    name: Pull request FTs
+    runs-on: ubuntu-latest
 
     steps:
 
@@ -44,5 +41,5 @@ jobs:
         uses: actions/upload-artifact@v1
         if: always()
         with:
-          name: ft-logs-${{ matrix.os }}
+          name: pull-request-fts-logs
           path: functional-tests/logs
