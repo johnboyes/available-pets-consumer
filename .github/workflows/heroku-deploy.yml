@@ -19,6 +19,30 @@ jobs:
           heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
 
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Install Gauge
+        uses: getgauge/setup-gauge@master
+        with:
+          gauge-version: master
+          gauge-plugins: js, html-report, screenshot
+
+      - name: Pre-production FTs
+        env:
+          WEB_URL: ${{ secrets.WEB_URL }}
+        run: |
+          cd functional-tests
+          npm install
+          gauge run
+
+      - name: Upload logs
+        uses: actions/upload-artifact@v1
+        if: always()
+        with:
+          name: pre-production-fts-logs
+          path: functional-tests/logs
+
   deploy-to-production:
     needs: deploy-to-pre-production
     runs-on: ubuntu-20.04
