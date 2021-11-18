@@ -8,7 +8,44 @@ on:  # yamllint disable-line rule:truthy
 
 jobs:
 
+  deploy-to-post-merge:
+    runs-on: ubuntu-20.04
+    environment: post-merge
+    steps:
+      - uses: actions/checkout@v2.3.4
+      - uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Install Gauge
+        uses: getgauge/setup-gauge@master
+        with:
+          gauge-version: master
+          gauge-plugins: js, html-report, screenshot
+
+      - name: Post-merge FTs
+        env:
+          WEB_URL: ${{ secrets.WEB_URL }}
+        run: |
+          cd functional-tests
+          npm install
+          gauge run
+
+      - name: Upload logs
+        uses: actions/upload-artifact@v1
+        if: always()
+        with:
+          name: post-merge-fts-logs
+          path: functional-tests/logs
+
+
   deploy-to-pre-production:
+    needs: deploy-to-post-merge
     runs-on: ubuntu-20.04
     environment: pre-production
     steps:
