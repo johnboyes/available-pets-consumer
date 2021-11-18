@@ -29,6 +29,27 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Set PETSTORE_URL output var
+        id: set-petstore-url-output-var
+        run: |
+          PROVIDER_REPO=https://github.com/agilepathway/java-openapi-provider
+          PROVIDER_BRANCH=${GITHUB_HEAD_REF}
+          if ! git ls-remote --exit-code --heads $PROVIDER_REPO ${PROVIDER_BRANCH}; then
+            PROVIDER_BRANCH=master
+          fi
+          MOCK_SERVER_BASE_URL=https://stoplight.io/mocks/agilepathway/java-openapi-provider
+          MOCK_SERVER_ID=84330
+          PETSTORE_URL=${{ format('{0}:{1}/{2}/', '$MOCK_SERVER_BASE_URL', '${PROVIDER_BRANCH}', '${MOCK_SERVER_ID}') }}
+          echo "::set-output name=petstore-url::${PETSTORE_URL}"
+
+      - name: Set PETSTORE_URL config var on Heroku
+        run: |
+          heroku config:set \
+            PETSTORE_URL="${{ steps.set-petstore-url-output-var.outputs.petstore-url }}" \
+            --app ${{ steps.review_app_status.outputs.review_app_name }}
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+
       - name: FTs
         env:
           WEB_URL: ${{ steps.review_app_status.outputs.review_app_url }}
