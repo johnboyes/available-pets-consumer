@@ -9,6 +9,7 @@ on:  # yamllint disable-line rule:truthy
 jobs:
 
   deploy-to-pre-production:
+    needs: deploy-to-post-merge
     runs-on: ubuntu-20.04
     environment: pre-production
     steps:
