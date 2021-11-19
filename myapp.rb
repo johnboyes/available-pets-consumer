@@ -3,7 +3,7 @@ require 'net/http'
 require 'json'
 
 get('/') do
-  pets.filter_map { |pet| "#{pet['name']}<br />" unless pet['name'].nil? }
+  pets.filter_map { |pet| "#{pet['name']}<br />" unless pet['name'].nil? }.prepend('<h2>Available</h2>')
 end
 
 def pets
