@@ -48,3 +48,8 @@ step("There is a pet named <petName> available in the pet store", async function
     await goto(process.env.WEB_URL);
     assert.ok(await text(petName).exists(0, 0));
 });
+
+step("There is a pet named <petName> new in the pet store", async function (petName) {
+    await goto(`${process.env.WEB_URL}/new`);
+    assert.ok(await text(petName).exists(0, 0));
+});
