@@ -109,3 +109,22 @@ Now the spec passes :-)
 
 11. The provider can now go ahead and implement their side of the updated (OpenAPI) contract, safe in the knowledge
     that as long as their implementation conforms to the changed OpenAPI spec then the consumer's needs will be met.
+
+
+## Benefits of this approach
+
+1. Collaborative - consumers, solution architects, developers, testers, analysts, Product Owner all have a natural interest in being involved.  This is a great silo breaker.
+2. [Shift Left](https://devops.com/devops-shift-left-avoid-failure/) - enables testing of APIs before implementation has started
+3. [Design-first APIs](https://tyk.io/moving-api-design-first-agile-world/)
+   - [Development teams can work in parallel](https://swagger.io/resources/articles/adopting-an-api-first-approach/#development-teams-can-work-in-parallel--3)
+   - [Reduces the cost of developing apps](https://swagger.io/resources/articles/adopting-an-api-first-approach/#reduces-the-cost-of-developing-apps-4)
+   - [Increases the speed to market](https://swagger.io/resources/articles/adopting-an-api-first-approach/#increases-the-speed-to-market-5)
+   - [Ensures good developer experiences](https://swagger.io/resources/articles/adopting-an-api-first-approach/#ensures-good-developer-experiences-6)
+   - [Reduces the risk of failure](https://swagger.io/resources/articles/adopting-an-api-first-approach/#reduces-the-risk-of-failure-7)
+4. [Specification by Example](https://gojko.net/2008/11/04/specifying-with-examples/)
+   - Shared understanding between all parties
+   - [Living documentation](https://www.infoq.com/articles/book-review-living-documentation/), providing a single source of truth. This API documentation stays up to date because it is executable, and is only written in one place (rather than analysts, developers and testers all writing their own separate documentation.)
+5. API [black box testing](https://resources.whitesourcesoftware.com/blog-whitesource/black-box-testing)
+   - provides great test coverage
+6. Having a Review App on each pull request allows the development team and Product Owner to review each feature straightaway
+   and to flag any issues *before* the feature is merged (rather than waiting till a much later UAT phase).
