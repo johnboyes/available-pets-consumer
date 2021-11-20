@@ -9,6 +9,7 @@ A [Review App](https://devcenter.heroku.com/articles/github-integration-review-a
 created for each pull request.  The URL pattern for a review app is e.g.
 https://available-pets-pr-123.herokuapp.com
 
+See also the companion [provider microservice](https://github.com/agilepathway/java-openapi-provider) to this consumer.
 
 ## Workflow for consumer-driven changes to the provider API
 
