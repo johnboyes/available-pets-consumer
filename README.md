@@ -22,20 +22,21 @@ Let's say that we want to add a new feature to show new pets in the petstore.
 
    For our scenario, this could be something like:
 
-```markdown
-## Customers can see which pets are new in the pet store
+   ```markdown
+   ## Customers can see which pets are new in the pet store
 
-* There is a pet named "doggie" new in the pet store
-```
+   * There is a pet named "doggie" new in the pet store
+   ```
 
-3. Write the [step implementation](https://docs.gauge.org/writing-specifications.html#step-implementations) to implement this new spec, e.g. for our [Taiko](https://taiko.dev/) JavaScript step implementation:
+3. Write the [step implementation](https://docs.gauge.org/writing-specifications.html#step-implementations) to 
+   implement this new spec, e.g. for our [Taiko](https://taiko.dev/) JavaScript step implementation:
 
-```js
-step("There is a pet named <petName> new in the pet store", async function (petName) {
-    await goto(`${process.env.WEB_URL}/new`);
-    assert.ok(await text(petName).exists(0, 0));
-});
-```
+   ```js
+   step("There is a pet named <petName> new in the pet store", async function (petName) {
+      await goto(`${process.env.WEB_URL}/new`);
+      assert.ok(await text(petName).exists(0, 0));
+   });
+   ```
 
 4. Now we can run our new Gauge spec locally and of course it will fail, as we have not implemented the new feature yet:
 
@@ -49,15 +50,15 @@ step("There is a pet named <petName> new in the pet store", async function (petN
 
 5. First step to make the failing spec pass is to add the new feature to our web app, e.g.
 
-```ruby
-get('/new') do
-  new_pets.filter_map { |pet| "#{pet['name']}<br />" unless pet['name'].nil? }.prepend('<h2>New</h2>')
-end
+   ```ruby
+   get('/new') do
+   new_pets.filter_map { |pet| "#{pet['name']}<br />" unless pet['name'].nil? }.prepend('<h2>New</h2>')
+   end
 
-def new_pets
-  get_json "#{petstore_url}pet/findByStatus?status=new"
-end
-```
+   def new_pets
+   get_json "#{petstore_url}pet/findByStatus?status=new"
+   end
+   ```
 
 6. Run the Gauge spec again. It will still fail, because the web app is requesting a pet status from the
 provider's OpenAPI (`"#{petstore_url}pet/findByStatus?status=new"`) which the provider does not yet provide.
@@ -99,15 +100,40 @@ Now the spec passes :-)
    the provider's OpenAPI spec on the provider's feature branch that we created, exactly the same as the Prism
    mock that we ran locally in the previous step above.
 
-10. We would go ahead and merge the pull request.  One important thing to note is that as the provider has not yet
-    implemented their side of the updated API, **we are not yet in a position to deploy our consumer to production**.
-    One option would be to have hidden our feature behind a 
+10. It is important that the provider also has always-up-to-date specifications which define the consumer contracts in
+    the provider repo.  So we as the consumer should also add a specification in the *provider* repo (on the same
+    feature branch that we created for the OpenAPI spec modification), e.g.
+
+    ```markdown
+    ## Customers can see which pets are new in the pet store
+
+    * There is a pet named "doggie" new in the pet store
+    ```
+
+    Note that this spec is identical to the spec we created earlier in our consumer repo.  This is a good thing as it
+    describes the same consistent API contract in both the consumer and provider (it's not a disaster if the specs
+    have slightly different wording due to step implementation differences, but it's a good goal to keep them the same
+    or as close to the same as possible).
+
+    If the consumer team have the capability to add the step implementation for this spec in the provider repo, they 
+    should go ahead and do so on the same feature branch.  The step implementation on the provider side would be a 
+    black-box API test using Prism, so implementing it does not require any knowledge of the internals of the provider
+    application.  This is a nice instance of using
+    [innersource](https://resources.github.com/whitepapers/introduction-to-innersource/) principles.  If not, then it's
+    also fine for the implementation to be left to the provider to do(in step 12 below).
+
+    Have a look at [the `new-pets` branch in the provider](https://github.com/agilepathway/java-openapi-provider/tree/new-pets) 
+    and you can see these changes added by the consumer in the most recent commits there.
+
+11. We would go ahead and merge the pull request in our own consumer repo.  One important thing to note is that as the 
+    provider has not yet implemented their side of the updated API, **we are not yet in a position to deploy our
+    consumer to production**. One option would be to hide our feature behind a 
     [feature flag](https://trunkbaseddevelopment.com/feature-flags/).
     We don't *need* a feature flag though.  We also have the safety net of a build stage which tests our consumer
     web app against the *real* provider, rather than a mock.  This ensures that there's no danger of us breaking
     production by releasing our consumer before the provider.
 
-11. The provider can now go ahead and implement their side of the updated (OpenAPI) contract, safe in the knowledge
+12. The provider can now go ahead and implement their side of the updated (OpenAPI) contract, safe in the knowledge
     that as long as their implementation conforms to the changed OpenAPI spec then the consumer's needs will be met.
 
 
