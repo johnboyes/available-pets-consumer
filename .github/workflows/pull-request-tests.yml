@@ -32,15 +32,16 @@ jobs:
       - name: Set PETSTORE_URL output var
         id: set-petstore-url-output-var
         run: |
-          PROVIDER_REPO=https://github.com/agilepathway/java-openapi-provider
-          PROVIDER_BRANCH=${GITHUB_HEAD_REF}
-          if ! git ls-remote --exit-code --heads $PROVIDER_REPO ${PROVIDER_BRANCH}; then
-            PROVIDER_BRANCH=master
+          CONTRACT_REPO=https://github.com/agilepathway/available-pets-consumer-contract
+          CONTRACT_BRANCH=${GITHUB_HEAD_REF}
+          if ! git ls-remote --exit-code --heads $CONTRACT_REPO ${CONTRACT_BRANCH}; then
+            CONTRACT_BRANCH=master
           fi
-          MOCK_SERVER_BASE_URL=https://stoplight.io/mocks/agilepathway/java-openapi-provider
+          MOCK_SERVER_BASE_URL=https://stoplight.io/mocks/agilepathway/available-pets-consumer-contract
           MOCK_SERVER_ID=84330
-          PETSTORE_URL=${{ format('{0}:{1}/{2}/', '$MOCK_SERVER_BASE_URL', '${PROVIDER_BRANCH}', '${MOCK_SERVER_ID}') }}
+          PETSTORE_URL=${{ format('{0}:{1}/{2}/', '$MOCK_SERVER_BASE_URL', '${CONTRACT_BRANCH}', '${MOCK_SERVER_ID}') }}
           echo "::set-output name=petstore-url::${PETSTORE_URL}"
+          echo "::set-output name=contract-branch::${CONTRACT_BRANCH}"
 
       - name: Set PETSTORE_URL config var on Heroku
         run: |
@@ -64,3 +65,17 @@ jobs:
         with:
           name: pull-request-fts-logs
           path: functional-tests/logs
+
+      - name: Fail the build if the contract repo has the same branch as our PR
+        if: ${{ steps.set-petstore-url-output-var.outputs.contract-branch != 'master' }}
+        uses: actions/github-script@v5
+        with:
+          script: >
+            core.setFailed("
+            Our workflow demands that the branch
+            ${{ steps.set-petstore-url-output-var.outputs.contract-branch }}
+            must not exist on the contract repo - as when it does exist the review app uses it instead of the contract
+            repo's master branch, whereas we need the review app to use the master branch before we can merge this pull
+            request on our consuming app. Merge the contract repo's branch and then delete it - or just delete it if no
+            changes to the contract are required for this consumer feature - then try again.
+            ")
