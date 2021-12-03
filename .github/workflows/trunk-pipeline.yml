@@ -43,6 +43,28 @@ jobs:
           name: post-merge-fts-logs
           path: functional-tests/logs
 
+      - name: Set contract repo HEAD output var
+        id: set-contract-head-output-var
+        # NB we append the date time to the tag to make it unique,
+        # as multiple commits can be linked to the same contract repo commit
+        run: |
+          CONTRACT_REPO=https://github.com/agilepathway/available-pets-consumer-contract
+          CONTRACT_HEAD=$(git ls-remote --heads $CONTRACT_REPO refs/heads/master | head -c 7)
+          DATETIME=$(date '+%Y-%m-%d-%H-%M-%S')
+          echo "::set-output name=contract-head::${CONTRACT_HEAD}-available-pets-consumer-contract-${DATETIME}"
+
+      - name: Tag commit with HEAD commit from contract repo
+        uses: actions/github-script@v5
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: "refs/tags/${{ steps.set-contract-head-output-var.outputs.contract-head }}",
+              sha: context.sha
+            })
+
 
   deploy-to-pre-production:
     needs: deploy-to-post-merge
