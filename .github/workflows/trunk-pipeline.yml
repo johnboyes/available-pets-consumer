@@ -49,7 +49,7 @@ jobs:
         # as multiple commits can be linked to the same contract repo commit
         run: |
           CONTRACT_REPO=https://github.com/agilepathway/available-pets-consumer-contract
-          CONTRACT_HEAD=$(git ls-remote --heads $CONTRACT_REPO refs/heads/master | head -c 7)
+          CONTRACT_HEAD=($(git ls-remote --heads $CONTRACT_REPO refs/heads/master))
           DATETIME=$(date '+%Y-%m-%d-%H-%M-%S')
           echo "::set-output name=contract-head::${CONTRACT_HEAD}-available-pets-consumer-contract-${DATETIME}"
 
