@@ -51,7 +51,7 @@ jobs:
           CONTRACT_REPO=https://github.com/agilepathway/available-pets-consumer-contract
           CONTRACT_HEAD=($(git ls-remote --heads $CONTRACT_REPO refs/heads/master))
           DATETIME=$(date '+%Y-%m-%d-%H-%M-%S')
-          echo "::set-output name=contract-head::${CONTRACT_HEAD}-available-pets-consumer-contract-${DATETIME}"
+          echo "::set-output name=contract-head::available-pets-consumer-contract-${CONTRACT_HEAD}-${DATETIME}"
 
       - name: Tag commit with HEAD commit from contract repo
         uses: actions/github-script@v5
