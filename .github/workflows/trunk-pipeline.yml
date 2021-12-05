@@ -65,9 +65,69 @@ jobs:
               sha: context.sha
             })
 
+  can-i-deploy:
+    needs: deploy-to-post-merge
+    # Verify that the provider satisfies the contract for our specific consumer commit.
+    # If the contract is not satisfied by the provider then the pipeline stops and we do
+    # not deploy to our integrated environments (pre-production and production).  We would
+    # then wait for the provider to deploy the changes necessary on their side.
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: '0'
+
+      - name: Set contract repo commit output var
+        id: set-contract-commit-output-var
+        run: |
+          CONTRACT_TAG=$(git describe --match "available-pets-consumer-contract*" --tags ${GITHUB_SHA})
+          TMP=${CONTRACT_TAG#*available-pets-consumer-contract-}   # remove prefix ending in "_"
+          CONTRACT_COMMIT=${TMP%%-*} # remove suffix starting with "-"
+          echo "::set-output name=contract-commit::${CONTRACT_COMMIT}"
+
+      - name: Check out contract repo
+        # We checkout the specific commit on the contract repo that we associated (tagged) with our consumer commit
+        uses: actions/checkout@v2
+        with:
+          repository: agilepathway/available-pets-consumer-contract
+          path: './contract'
+          ref: ${{ steps.set-contract-commit-output-var.outputs.contract-commit }}
+
+      - name: Set up Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Install Gauge
+        uses: getgauge/setup-gauge@master
+        with:
+          gauge-plugins: java, html-report
+
+      - name: Install Prism
+        run: npm install -g @stoplight/prism-cli
+
+      - name: Start Prism in validation proxy mode
+        working-directory: ./contract
+        run: prism proxy openapi.yaml https://petstore.swagger.io/v2 --errors &
+
+      - name: Check that the provider in production satisfies the contract
+        env:
+          OPENAPI_HOST: http://127.0.0.1:4010
+        working-directory: ./contract
+        run: gauge run specs
+
+      - name: Upload Gauge test report
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: gauge-html-report
+          path: contract/reports/html-report/
+
 
   deploy-to-pre-production:
-    needs: deploy-to-post-merge
+    needs: can-i-deploy
     runs-on: ubuntu-20.04
     environment: pre-production
     steps:
