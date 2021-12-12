@@ -110,7 +110,7 @@ jobs:
 
       - name: Start Prism in validation proxy mode
         working-directory: ./contract
-        run: prism proxy openapi.yaml https://petstore.swagger.io/v2 --errors &
+        run: prism proxy openapi.yaml https://petstore-openapi-service.herokuapp.com/v2 --errors &
 
       - name: Check that the provider in production satisfies the contract
         env:
