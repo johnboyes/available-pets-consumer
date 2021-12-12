@@ -9,8 +9,10 @@ A [Review App](https://devcenter.heroku.com/articles/github-integration-review-a
 created for each pull request.  The URL pattern for a review app is e.g.
 https://available-pets-pr-123.herokuapp.com
 
-See also the companion [contract repo](https://github.com/agilepathway/available-pets-consumer-contract), which defines the
-contract between this consumer repo and the provider.
+See also the companion
+[contract repo](https://github.com/agilepathway/available-pets-consumer-contract),
+which defines the contract between this consumer repo and the provider, and the 
+[provider repo](https://github.com/agilepathway/petstore-service), which is a Java microservice.
 
 ## Workflow for consumer-driven changes to the provider API, amending the contract between consumer and provider
 
