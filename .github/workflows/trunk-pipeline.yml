@@ -65,7 +65,7 @@ jobs:
               sha: context.sha
             })
 
-  deploy-to-can-i-deploy:
+  deploy-ephemeral-provider-for-can-i-deploy-check:
     needs: deploy-to-post-merge
     runs-on: ubuntu-20.04
     environment: can-i-deploy
@@ -91,7 +91,7 @@ jobs:
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
 
   can-i-deploy:
-    needs: deploy-to-can-i-deploy
+    needs: deploy-ephemeral-provider-for-can-i-deploy-check
     # Verify that the provider satisfies the contract for our specific consumer commit.
     # If the contract is not satisfied by the provider then the pipeline stops and we do
     # not deploy to our integrated environments (pre-production and production).  We would
