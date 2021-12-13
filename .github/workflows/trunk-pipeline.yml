@@ -65,8 +65,31 @@ jobs:
               sha: context.sha
             })
 
-  can-i-deploy:
+  deploy-to-can-i-deploy:
     needs: deploy-to-post-merge
+    runs-on: ubuntu-20.04
+    environment: can-i-deploy
+    steps:
+
+      - name: Set provider repo production commit output var
+        id: set-provider-production-commit-output-var
+        # HEROKU_SLUG_COMMIT is available via https://devcenter.heroku.com/articles/dyno-metadata
+        run: |
+          COMMIT=$(heroku config:get --app petstore-openapi-service HEROKU_SLUG_COMMIT)
+          echo "::set-output name=commit::${COMMIT}"
+
+      - uses: actions/checkout@v2.3.4
+        with:
+          repository: agilepathway/petstore-service
+          ref: ${{ steps.set-provider-production-commit-output-var.outputs.commit }}
+      - uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ephemeral-petstore-service
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+
+  can-i-deploy:
+    needs: deploy-to-can-i-deploy
     # Verify that the provider satisfies the contract for our specific consumer commit.
     # If the contract is not satisfied by the provider then the pipeline stops and we do
     # not deploy to our integrated environments (pre-production and production).  We would
@@ -110,8 +133,7 @@ jobs:
 
       - name: Start Prism in validation proxy mode
         working-directory: ./contract
-        run: prism proxy openapi.yaml https://petstore-openapi-service.herokuapp.com/v2 --errors &
-
+        run: prism proxy openapi.yaml https://ephemeral-petstore-service.herokuapp.com/v2 --errors &
       - name: Check that the provider in production satisfies the contract
         env:
           OPENAPI_HOST: http://127.0.0.1:4010
