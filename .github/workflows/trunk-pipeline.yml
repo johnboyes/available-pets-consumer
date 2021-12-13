@@ -77,6 +77,8 @@ jobs:
         run: |
           COMMIT=$(heroku config:get --app petstore-openapi-service HEROKU_SLUG_COMMIT)
           echo "::set-output name=commit::${COMMIT}"
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
 
       - uses: actions/checkout@v2.3.4
         with:
