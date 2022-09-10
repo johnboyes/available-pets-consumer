@@ -9,7 +9,7 @@ on:  # yamllint disable-line rule:truthy
 jobs:
 
   deploy-to-post-merge:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     environment: post-merge
     steps:
       - uses: actions/checkout@v2.3.4
@@ -67,7 +67,7 @@ jobs:
 
   deploy-ephemeral-provider-for-can-i-deploy-check:
     needs: deploy-to-post-merge
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     environment: can-i-deploy
     steps:
 
@@ -96,7 +96,7 @@ jobs:
     # If the contract is not satisfied by the provider then the pipeline stops and we do
     # not deploy to our integrated environments (pre-production and production).  We would
     # then wait for the provider to deploy the changes necessary on their side.
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -152,7 +152,7 @@ jobs:
 
   deploy-to-pre-production:
     needs: can-i-deploy
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     environment: pre-production
     steps:
       - uses: actions/checkout@v2.3.4
@@ -188,7 +188,7 @@ jobs:
 
   deploy-to-production:
     needs: deploy-to-pre-production
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     environment: production
     steps:
       - uses: actions/checkout@v2.3.4
