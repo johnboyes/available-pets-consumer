@@ -22,7 +22,7 @@ def get_json(url)
 end
 
 def petstore_url
-  petstore_url = ENV['PETSTORE_URL']
+  petstore_url = ENV.fetch('PETSTORE_URL')
   puts "Petstore URL is #{petstore_url}"
   petstore_url
 end
