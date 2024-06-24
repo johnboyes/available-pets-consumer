@@ -3,11 +3,19 @@ require 'net/http'
 require 'json'
 
 get('/') do
-  pets.filter_map { |pet| "#{pet['name']}<br />" unless pet['name'].nil? }.prepend('<h2>Available</h2>')
+  available_pets.filter_map { |pet| "#{pet['name']}<br />" unless pet['name'].nil? }.prepend('<h2>Available</h2>')
 end
 
-def pets
+get('/new') do
+  new_pets.filter_map { |pet| "#{pet['name']}<br />" unless pet['name'].nil? }.prepend('<h2>New</h2>')
+end
+
+def available_pets
   get_json "#{petstore_url}pet/findByStatus?status=available"
+end
+
+def new_pets
+  get_json "#{petstore_url}pet/findByStatus?status=new"
 end
 
 def get_json(url)
